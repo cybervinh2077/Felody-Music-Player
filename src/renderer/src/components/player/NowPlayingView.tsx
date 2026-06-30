@@ -65,7 +65,7 @@ export default function NowPlayingView(): React.ReactElement {
     <div className={styles.page}>
       <div className={styles.artwork}>
         {currentTrack.artworkPath
-          ? <img src={`file:///${currentTrack.artworkPath.replace(/\\/g, '/')}`} alt={currentTrack.title || ''} />
+          ? <img src={'file:///' + currentTrack.artworkPath!.replace(/\\/g, '/').replace(/ /g, '%20')} alt={currentTrack.title || ''} />
           : (
             <div className={styles.artworkPlaceholder}>
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8">

@@ -63,7 +63,7 @@ export default function TrackList({ tracks, onPlay }: Props): React.ReactElement
               <div className={styles.colTitle}>
                 <div className={styles.artwork}>
                   {track.artworkPath
-                    ? <img src={`file:///${track.artworkPath.replace(/\\/g, '/')}`} alt="" />
+                    ? <img src={'file:///' + track.artworkPath!.replace(/\\/g, '/').replace(/ /g, '%20')} alt="" />
                     : <MusicNote />
                   }
                 </div>

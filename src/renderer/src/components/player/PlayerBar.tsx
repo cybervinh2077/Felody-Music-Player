@@ -67,7 +67,7 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
       <div className={styles.trackInfo} onClick={onOpenNowPlaying}>
         <div className={styles.artwork}>
           {currentTrack?.artworkPath
-            ? <img src={`file:///${currentTrack.artworkPath.replace(/\\/g, '/')}`} alt="" />
+            ? <img src={'file:///' + currentTrack.artworkPath!.replace(/\\/g, '/').replace(/ /g, '%20')} alt="" />
             : (
               <div className={styles.artworkPlaceholder}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

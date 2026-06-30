@@ -23,7 +23,8 @@ function createWindow(): void {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      webSecurity: false  // Allow file:// media/images from localhost renderer
     }
   })
 

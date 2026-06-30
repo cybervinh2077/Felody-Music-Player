@@ -50,7 +50,7 @@ export default function AudioEngine(): null {
   useEffect(() => {
     const audio = audioRef.current
     if (!audio || !currentTrack) return
-    const src = `file:///${currentTrack.path.replace(/\\/g, '/')}`
+    const src = 'file:///' + currentTrack.path.replace(/\\/g, '/').replace(/ /g, '%20')
     if (audio.src !== src) {
       audio.src = src
       audio.load()
