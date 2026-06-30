@@ -5,29 +5,18 @@ import { useLibraryStore } from '../../store/libraryStore'
 import styles from './SettingsView.module.css'
 
 interface Props {
-  onReScan: () => void
+  scanning: boolean
+  scanProgress: ScanProgress | null
+  onStartScan: () => void
 }
 
-export default function SettingsView({ onReScan }: Props): React.ReactElement {
+export default function SettingsView({ scanning, scanProgress, onStartScan }: Props): React.ReactElement {
   const { settings, update } = useSettingsStore()
   const { loadAll } = useLibraryStore()
   const [sources, setSources] = useState<FolderSource[]>([])
-  const [progress, setProgress] = useState<ScanProgress | null>(null)
-  const [scanning, setScanning] = useState(false)
 
   useEffect(() => {
     window.api.getSources().then(setSources)
-  }, [])
-
-  useEffect(() => {
-    const unsub = window.api.onScanProgress((p) => {
-      setProgress(p)
-      if (p.isComplete) {
-        setScanning(false)
-        onReScan()
-      }
-    })
-    return unsub
   }, [])
 
   const addFolder = async () => {
@@ -43,12 +32,6 @@ export default function SettingsView({ onReScan }: Props): React.ReactElement {
     await window.api.removeSource(id)
     setSources((prev) => prev.filter((s) => s.id !== id))
     await loadAll()
-  }
-
-  const startScan = async () => {
-    setScanning(true)
-    setProgress(null)
-    await window.api.startScan()
   }
 
   if (!settings) return <div />
@@ -78,21 +61,21 @@ export default function SettingsView({ onReScan }: Props): React.ReactElement {
           <button className={styles.btnOutline} onClick={addFolder}>+ Thêm thư mục</button>
           <button
             className={styles.btnPrimary}
-            onClick={startScan}
+            onClick={onStartScan}
             disabled={scanning}
           >
             {scanning ? 'Đang quét...' : '↺ Quét lại thư viện'}
           </button>
         </div>
 
-        {scanning && progress && (
+        {scanning && scanProgress && (
           <div style={{ marginTop: 12 }}>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 4 }}>
-              {progress.scanned} / {progress.total || '?'} · {progress.valid} hợp lệ · {progress.errors} lỗi
+              {scanProgress.scanned} / {scanProgress.total || '?'} · {scanProgress.valid} hợp lệ · {scanProgress.errors} lỗi
             </div>
             <div style={{ background: 'var(--bg-elevated)', borderRadius: 4, height: 4 }}>
               <div style={{
-                width: progress.total ? `${(progress.scanned / progress.total) * 100}%` : '0%',
+                width: scanProgress.total ? `${(scanProgress.scanned / scanProgress.total) * 100}%` : '0%',
                 height: '100%', background: 'var(--accent)', borderRadius: 4, transition: 'width 0.2s'
               }} />
             </div>

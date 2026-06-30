@@ -122,7 +122,6 @@ async function scanDir(
 
       progress.scanned++
       progress.currentFile = entry.name
-      emit(win, progress)
 
       try {
         const parse = await getParser()
@@ -169,7 +168,7 @@ async function scanDir(
         } catch { /* ignore */ }
       }
 
-      if (progress.scanned % 10 === 0) emit(win, progress)
+      if (progress.scanned % 20 === 0) emit(win, progress)
     }
   }
 }

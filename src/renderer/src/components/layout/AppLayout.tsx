@@ -27,38 +27,37 @@ export default function AppLayout(): React.ReactElement {
   const [scanProgress, setScanProgress] = useState<ScanProgress | null>(null)
 
   const startScan = useCallback(async () => {
+    if (scanning) return
     setScanning(true)
     setScanProgress(null)
     await window.api.startScan()
-  }, [])
+  }, [scanning])
 
-  useEffect(() => {
-    const run = async () => {
-      await loadAll()
-
-      // Auto-rescan if library is empty but sources exist
-      const tracks = await window.api.getTracks(1)
-      if (tracks.length === 0) {
-        const sources = await window.api.getSources()
-        if (sources.length > 0) {
-          startScan()
-        }
-      }
-    }
-    run()
-  }, [])
-
+  // Single scan progress listener — AppLayout owns all scan state
   useEffect(() => {
     const unsub = window.api.onScanProgress((p) => {
       setScanProgress(p)
       if (p.isComplete) {
         setScanning(false)
-        // Reload library after scan finishes
         loadAll()
       }
     })
     return unsub
   }, [])
+
+  useEffect(() => {
+    const run = async () => {
+      await loadAll()
+      const tracks = await window.api.getTracks(1)
+      if (tracks.length === 0) {
+        const sources = await window.api.getSources()
+        if (sources.length > 0) startScan()
+      }
+    }
+    run()
+  }, [])
+
+  const openNowPlaying = useCallback(() => setView('now-playing'), [])
 
   const renderView = () => {
     switch (view) {
@@ -73,7 +72,13 @@ export default function AppLayout(): React.ReactElement {
       case 'recently-played': return <SongsView filter="recently-played" />
       case 'search':          return <SearchView />
       case 'now-playing':     return <NowPlayingView />
-      case 'settings':        return <SettingsView onReScan={() => { loadAll(); startScan() }} />
+      case 'settings':        return (
+        <SettingsView
+          scanning={scanning}
+          scanProgress={scanProgress}
+          onStartScan={startScan}
+        />
+      )
       default:                return <SongsView />
     }
   }
@@ -102,7 +107,7 @@ export default function AppLayout(): React.ReactElement {
           {renderView()}
         </main>
       </div>
-      {view !== 'now-playing' && <PlayerBar onOpenNowPlaying={() => setView('now-playing')} />}
+      {view !== 'now-playing' && <PlayerBar onOpenNowPlaying={openNowPlaying} />}
       <AudioEngine />
     </div>
   )
