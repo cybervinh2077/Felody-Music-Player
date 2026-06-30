@@ -1,0 +1,131 @@
+import React from 'react'
+import { usePlayerStore } from '../../store/playerStore'
+import styles from './NowPlayingView.module.css'
+
+function fmt(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = Math.floor(seconds % 60)
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+export default function NowPlayingView(): React.ReactElement {
+  const {
+    currentTrack, isPlaying, progress, duration, volume, shuffle, repeat, isFavorite,
+    setIsPlaying, setVolume, toggleShuffle, cycleRepeat, nextTrack, prevTrack, setCurrentTrack, toggleFavorite
+  } = usePlayerStore()
+
+  const elapsed = progress * duration
+
+  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const ratio = Number(e.target.value)
+    const audio = document.querySelector('audio') as HTMLAudioElement | null
+    if (audio && audio.duration) audio.currentTime = ratio * audio.duration
+  }
+
+  const handlePrev = () => {
+    const audio = document.querySelector('audio') as HTMLAudioElement | null
+    if (audio && audio.currentTime > 3) { audio.currentTime = 0; return }
+    const t = prevTrack()
+    if (t) setCurrentTrack(t)
+  }
+
+  const handleNext = () => {
+    const t = nextTrack()
+    if (t) setCurrentTrack(t)
+  }
+
+  const handleFavorite = async () => {
+    if (!currentTrack) return
+    await window.api.toggleFavorite(currentTrack.id)
+    toggleFavorite()
+  }
+
+  if (!currentTrack) {
+    return (
+      <div className={styles.empty}>
+        <div className={styles.emptyIcon}>🎵</div>
+        <p>Chưa có bài hát nào đang phát</p>
+        <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+          Chọn bài hát từ thư viện để bắt đầu
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className={styles.page}>
+      <div className={styles.artwork}>
+        {currentTrack.artworkPath
+          ? <img src={`file:///${currentTrack.artworkPath.replace(/\\/g, '/')}`} alt={currentTrack.title || ''} />
+          : <div className={styles.artworkPlaceholder}>🎵</div>
+        }
+      </div>
+
+      <div className={styles.info}>
+        <div className={styles.trackTitle}>{currentTrack.title || currentTrack.fileName}</div>
+        <div className={styles.trackArtist}>{currentTrack.artist || 'Không rõ nghệ sĩ'}</div>
+        <div className={styles.trackAlbum}>{currentTrack.album || ''}</div>
+      </div>
+
+      <div className={styles.progress}>
+        <input
+          type="range" min={0} max={1} step={0.001}
+          value={progress}
+          onChange={handleSeek}
+          className={styles.progressBar}
+        />
+        <div className={styles.times}>
+          <span>{fmt(elapsed)}</span>
+          <span>{fmt(duration)}</span>
+        </div>
+      </div>
+
+      <div className={styles.controls}>
+        <button
+          className={`${styles.iconBtn} ${shuffle ? styles.active : ''}`}
+          onClick={toggleShuffle} title="Shuffle"
+        >⇄</button>
+        <button className={styles.iconBtn} onClick={handlePrev}>⏮</button>
+        <button className={styles.playBtn} onClick={() => setIsPlaying(!isPlaying)}>
+          {isPlaying ? '⏸' : '▶'}
+        </button>
+        <button className={styles.iconBtn} onClick={handleNext}>⏭</button>
+        <button
+          className={`${styles.iconBtn} ${repeat !== 'none' ? styles.active : ''}`}
+          onClick={cycleRepeat}
+        >{repeat === 'one' ? '↺¹' : '↻'}</button>
+      </div>
+
+      <div className={styles.extra}>
+        <button
+          className={`${styles.iconBtn} ${isFavorite ? styles.fav : ''}`}
+          onClick={handleFavorite}
+        >{isFavorite ? '❤️' : '🤍'}</button>
+
+        <div className={styles.volume}>
+          <span>{volume === 0 ? '🔇' : '🔊'}</span>
+          <input
+            type="range" min={0} max={1} step={0.01}
+            value={volume}
+            onChange={(e) => setVolume(Number(e.target.value))}
+            className={styles.volumeBar}
+          />
+        </div>
+
+        <button
+          className={styles.iconBtn}
+          onClick={() => window.api.openFolder(currentTrack.path)}
+          title="Mở thư mục chứa file"
+        >📂</button>
+      </div>
+
+      {currentTrack.album && (
+        <div className={styles.metadata}>
+          <span>{currentTrack.format}</span>
+          {currentTrack.bitrate && <span>{currentTrack.bitrate} kbps</span>}
+          {currentTrack.sampleRate && <span>{currentTrack.sampleRate / 1000} kHz</span>}
+        </div>
+      )}
+    </div>
+  )
+}

@@ -1,0 +1,9 @@
+node_modules/
+out/
+dist/
+*.bak
+test-main*.js
+test-main*.cjs
+test-pkg.json
+package-test.json
+.DS_Store
