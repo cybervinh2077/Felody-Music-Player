@@ -135,6 +135,7 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
             onChange={handleSeekChange}
             onMouseUp={handleSeekCommit}
             className={styles.progressBar}
+            style={{ '--fill': `${(seeking ? seekVal : progress) * 100}%` } as React.CSSProperties}
           />
           <span className={styles.time}>{formatTime(duration)}</span>
         </div>
@@ -148,6 +149,7 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
           value={volume}
           onChange={(e) => setVolume(Number(e.target.value))}
           className={styles.volumeBar}
+          style={{ '--fill': `${volume * 100}%` } as React.CSSProperties}
         />
       </div>
     </div>

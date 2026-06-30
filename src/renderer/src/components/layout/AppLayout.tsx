@@ -102,7 +102,7 @@ export default function AppLayout(): React.ReactElement {
           {renderView()}
         </main>
       </div>
-      <PlayerBar onOpenNowPlaying={() => setView('now-playing')} />
+      {view !== 'now-playing' && <PlayerBar onOpenNowPlaying={() => setView('now-playing')} />}
       <AudioEngine />
     </div>
   )

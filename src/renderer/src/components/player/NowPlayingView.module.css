@@ -4,8 +4,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 40px 60px;
-  gap: 24px;
+  padding: 32px 60px 24px;
+  gap: 22px;
   overflow: auto;
 }
 
@@ -18,64 +18,86 @@
   gap: 12px;
   color: var(--text-muted);
 }
-.emptyIcon { font-size: 64px; }
 
 .artwork {
-  width: 240px;
-  height: 240px;
-  border-radius: 12px;
+  width: 260px;
+  height: 260px;
+  border-radius: 10px;
   overflow: hidden;
   background: var(--bg-elevated);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+  flex-shrink: 0;
 }
 .artwork img { width: 100%; height: 100%; object-fit: cover; }
-.artworkPlaceholder { font-size: 80px; }
+.artworkPlaceholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.12;
+}
 
 .info { text-align: center; }
 .trackTitle {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  letter-spacing: -0.01em;
 }
 .trackArtist {
-  font-size: 16px;
+  font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 .trackAlbum {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-muted);
 }
 
 /* Progress */
-.progress { width: 100%; max-width: 400px; }
+.progress { width: 100%; max-width: 420px; }
+
 .progressBar {
   width: 100%;
-  height: 4px;
+  height: 3px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--bg-active);
   border-radius: 2px;
   cursor: pointer;
   outline: none;
   display: block;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    var(--accent) var(--fill, 0%),
+    var(--bg-elevated) var(--fill, 0%),
+    var(--bg-elevated) 100%
+  );
+  transition: height 0.1s;
 }
+.progressBar:hover { height: 4px; }
 .progressBar::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 14px; height: 14px;
+  width: 0; height: 0;
   border-radius: 50%;
   background: var(--text-primary);
+  transition: width 0.1s, height 0.1s;
 }
-.progressBar:hover::-webkit-slider-thumb { background: var(--accent); }
+.progressBar:hover::-webkit-slider-thumb {
+  width: 13px;
+  height: 13px;
+}
+
 .times {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
   color: var(--text-muted);
-  margin-top: 6px;
+  margin-top: 7px;
   font-variant-numeric: tabular-nums;
 }
 
@@ -83,69 +105,94 @@
 .controls {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
 }
 
 .iconBtn {
-  width: 40px; height: 40px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  font-size: 18px;
-  display: flex; align-items: center; justify-content: center;
-  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
   transition: color 0.15s, background 0.15s;
 }
-.iconBtn:hover { color: var(--text-primary); background: var(--bg-hover); }
+.iconBtn:hover { color: var(--text-primary); background: var(--bg-elevated); }
 .iconBtn.active { color: var(--accent); }
-.iconBtn.fav { color: #ff4545; }
+.iconBtn.fav { color: #e05252; }
 
 .playBtn {
-  width: 60px; height: 60px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   background: var(--text-primary);
   color: var(--bg-base);
-  font-size: 22px;
-  display: flex; align-items: center; justify-content: center;
-  transition: transform 0.1s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s, opacity 0.1s;
+  margin: 0 6px;
 }
 .playBtn:hover { transform: scale(1.05); }
 
-/* Extra */
+/* Extra row */
 .extra {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
+  width: 100%;
+  max-width: 420px;
+  justify-content: space-between;
 }
+
 .volume {
   display: flex;
   align-items: center;
   gap: 8px;
+  flex: 1;
 }
+
 .volumeBar {
-  width: 100px;
-  height: 4px;
+  flex: 1;
+  height: 3px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--bg-active);
   border-radius: 2px;
   cursor: pointer;
   outline: none;
+  background: linear-gradient(
+    to right,
+    var(--text-secondary) 0%,
+    var(--text-secondary) var(--fill, 100%),
+    var(--bg-elevated) var(--fill, 100%),
+    var(--bg-elevated) 100%
+  );
+  transition: height 0.1s;
 }
+.volumeBar:hover { height: 4px; }
 .volumeBar::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 12px; height: 12px;
+  width: 11px;
+  height: 11px;
   border-radius: 50%;
   background: var(--text-primary);
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.1);
 }
 
 /* Metadata tags */
 .metadata {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  align-items: center;
 }
 .metadata span {
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   color: var(--text-muted);
   padding: 3px 8px;
   background: var(--bg-elevated);
-  border-radius: 100px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
 }

@@ -89,6 +89,7 @@ export default function NowPlayingView(): React.ReactElement {
           value={progress}
           onChange={handleSeek}
           className={styles.progressBar}
+          style={{ '--fill': `${progress * 100}%` } as React.CSSProperties}
         />
         <div className={styles.times}>
           <span>{fmt(elapsed)}</span>
@@ -128,6 +129,7 @@ export default function NowPlayingView(): React.ReactElement {
             value={volume}
             onChange={(e) => setVolume(Number(e.target.value))}
             className={styles.volumeBar}
+            style={{ '--fill': `${volume * 100}%` } as React.CSSProperties}
           />
         </div>
 

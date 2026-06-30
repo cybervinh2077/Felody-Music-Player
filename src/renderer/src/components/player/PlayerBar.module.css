@@ -147,11 +147,17 @@
   height: 3px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--bg-elevated);
   border-radius: 2px;
   cursor: pointer;
   outline: none;
   transition: height 0.1s;
+  background: linear-gradient(
+    to right,
+    var(--accent) 0%,
+    var(--accent) var(--fill, 0%),
+    var(--bg-elevated) var(--fill, 0%),
+    var(--bg-elevated) 100%
+  );
 }
 .progressBar:hover { height: 4px; }
 .progressBar::-webkit-slider-thumb {
@@ -190,18 +196,27 @@
   height: 3px;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--bg-elevated);
   border-radius: 2px;
   cursor: pointer;
   outline: none;
+  background: linear-gradient(
+    to right,
+    var(--text-secondary) 0%,
+    var(--text-secondary) var(--fill, 100%),
+    var(--bg-elevated) var(--fill, 100%),
+    var(--bg-elevated) 100%
+  );
+  transition: height 0.1s;
 }
+.volumeBar:hover { height: 4px; }
 .volumeBar::-webkit-slider-thumb {
   -webkit-appearance: none;
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: var(--text-secondary);
+  background: var(--text-primary);
+  transition: transform 0.1s;
 }
 .volumeBar:hover::-webkit-slider-thumb {
-  background: var(--text-primary);
+  transform: scale(1.2);
 }
