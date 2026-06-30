@@ -1,4 +1,8 @@
 import React, { useState } from 'react'
+import {
+  Play, Pause, SkipBack, SkipForward,
+  Shuffle, Repeat, Repeat1, Heart, Volume1, Volume2, VolumeX
+} from 'lucide-react'
 import { usePlayerStore } from '../../store/playerStore'
 import styles from './PlayerBar.module.css'
 
@@ -39,10 +43,7 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
 
   const handlePrev = () => {
     const audio = document.querySelector('audio') as HTMLAudioElement | null
-    if (audio && audio.currentTime > 3) {
-      audio.currentTime = 0
-      return
-    }
+    if (audio && audio.currentTime > 3) { audio.currentTime = 0; return }
     const track = prevTrack()
     if (track) setCurrentTrack(track)
   }
@@ -54,12 +55,11 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
 
   const handleFavorite = async () => {
     if (!currentTrack) return
-    const isFav = await window.api.toggleFavorite(currentTrack.id)
+    await window.api.toggleFavorite(currentTrack.id)
     toggleFavorite()
   }
 
-  const repeatIcon = repeat === 'none' ? '↻' : repeat === 'all' ? '↻' : '↺¹'
-  const repeatActive = repeat !== 'none'
+  const VolumeIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2
 
   return (
     <div className={styles.playerBar}>
@@ -68,7 +68,14 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
         <div className={styles.artwork}>
           {currentTrack?.artworkPath
             ? <img src={`file:///${currentTrack.artworkPath.replace(/\\/g, '/')}`} alt="" />
-            : <div className={styles.artworkPlaceholder}>🎵</div>
+            : (
+              <div className={styles.artworkPlaceholder}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                  <path d="M9 18V5l12-2v13"/>
+                  <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                </svg>
+              </div>
+            )
           }
         </div>
         <div className={styles.meta}>
@@ -77,10 +84,10 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
         </div>
         {currentTrack && (
           <button
-            className={`${styles.iconBtn} ${isFavorite ? styles.favActive : ''}`}
+            className={`${styles.favBtn} ${isFavorite ? styles.favActive : ''}`}
             onClick={(e) => { e.stopPropagation(); handleFavorite() }}
           >
-            {isFavorite ? '❤️' : '🤍'}
+            <Heart size={14} fill={isFavorite ? 'currentColor' : 'none'} />
           </button>
         )}
       </div>
@@ -91,31 +98,39 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
           <button
             className={`${styles.iconBtn} ${shuffle ? styles.active : ''}`}
             onClick={toggleShuffle}
-            title="Shuffle"
-          >⇄</button>
-          <button className={styles.iconBtn} onClick={handlePrev} title="Trước">⏮</button>
+            title="Trộn bài"
+          >
+            <Shuffle size={14} />
+          </button>
+          <button className={styles.iconBtn} onClick={handlePrev} title="Trước">
+            <SkipBack size={16} />
+          </button>
           <button
             className={styles.playBtn}
             onClick={() => setIsPlaying(!isPlaying)}
             title={isPlaying ? 'Dừng' : 'Phát'}
           >
-            {isPlaying ? '⏸' : '▶'}
+            {isPlaying
+              ? <Pause size={15} fill="currentColor" />
+              : <Play size={15} fill="currentColor" style={{ marginLeft: 1 }} />
+            }
           </button>
-          <button className={styles.iconBtn} onClick={handleNext} title="Tiếp">⏭</button>
+          <button className={styles.iconBtn} onClick={handleNext} title="Tiếp">
+            <SkipForward size={16} />
+          </button>
           <button
-            className={`${styles.iconBtn} ${repeatActive ? styles.active : ''}`}
+            className={`${styles.iconBtn} ${repeat !== 'none' ? styles.active : ''}`}
             onClick={cycleRepeat}
             title="Lặp lại"
-          >{repeatIcon}</button>
+          >
+            {repeat === 'one' ? <Repeat1 size={14} /> : <Repeat size={14} />}
+          </button>
         </div>
 
         <div className={styles.progress}>
           <span className={styles.time}>{formatTime(elapsed)}</span>
           <input
-            type="range"
-            min={0}
-            max={1}
-            step={0.001}
+            type="range" min={0} max={1} step={0.001}
             value={seeking ? seekVal : progress}
             onChange={handleSeekChange}
             onMouseUp={handleSeekCommit}
@@ -127,12 +142,9 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
 
       {/* Volume */}
       <div className={styles.right}>
-        <span className={styles.volumeIcon}>{volume === 0 ? '🔇' : volume < 0.5 ? '🔉' : '🔊'}</span>
+        <span className={styles.volBtn}><VolumeIcon size={14} /></span>
         <input
-          type="range"
-          min={0}
-          max={1}
-          step={0.01}
+          type="range" min={0} max={1} step={0.01}
           value={volume}
           onChange={(e) => setVolume(Number(e.target.value))}
           className={styles.volumeBar}

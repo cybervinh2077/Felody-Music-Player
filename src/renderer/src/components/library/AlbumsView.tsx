@@ -49,7 +49,7 @@ export default function AlbumsView(): React.ReactElement {
             <div className={styles.cardArt}>
               {album.artworkPath
                 ? <img src={`file:///${album.artworkPath.replace(/\\/g, '/')}`} alt="" />
-                : '💿'
+                : <svg className={styles.cardArtEmpty} width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
               }
             </div>
             <div className={styles.cardInfo}>

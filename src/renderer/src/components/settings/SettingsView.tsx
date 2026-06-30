@@ -60,12 +60,14 @@ export default function SettingsView({ onReScan }: Props): React.ReactElement {
         <div className={styles.sourceList}>
           {sources.map((s) => (
             <div key={s.id} className={styles.sourceRow}>
-              <span style={{ fontSize: 18 }}>📁</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink: 0, opacity: 0.5 }}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 500, fontSize: 13 }}>{s.displayName}</div>
                 <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{s.path}</div>
               </div>
-              <button onClick={() => removeFolder(s.id)} className={styles.removeBtn}>🗑</button>
+              <button onClick={() => removeFolder(s.id)} className={styles.removeBtn}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+              </button>
             </div>
           ))}
         </div>

@@ -62,7 +62,7 @@ export default function SearchView(): React.ReactElement {
             outline: 'none',
             transition: 'border-color 0.15s'
           }}
-          onFocus={(e) => (e.target.style.borderColor = 'var(--border-focus)')}
+          onFocus={(e) => (e.target.style.borderColor = 'var(--border-light)')}
           onBlur={(e) => (e.target.style.borderColor = 'var(--border)')}
         />
       </div>
@@ -80,7 +80,7 @@ export default function SearchView(): React.ReactElement {
         </>
       ) : (
         <div className={styles.loading} style={{ flexDirection: 'column', gap: 8 }}>
-          <div style={{ fontSize: 32 }}>🔍</div>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ opacity: 0.2 }}><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <div>Nhập từ khóa để tìm kiếm</div>
         </div>
       )}

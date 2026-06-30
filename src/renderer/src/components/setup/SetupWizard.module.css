@@ -11,50 +11,42 @@
 .stepper {
   display: flex;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 44px;
   gap: 0;
 }
 
 .stepDot {
-  width: 32px;
-  height: 32px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: var(--bg-elevated);
-  border: 2px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-muted);
-  font-size: 12px;
-  font-weight: 600;
+  background: var(--border-light);
   transition: all 0.2s;
   flex-shrink: 0;
 }
 
 .stepDot.active {
   background: var(--accent);
-  border-color: var(--accent);
-  color: #000;
 }
 
 .stepDot.current {
-  background: transparent;
-  border-color: var(--accent);
-  color: var(--accent);
+  background: var(--text-secondary);
+  width: 18px;
+  border-radius: 3px;
 }
 
 .stepLine {
-  width: 48px;
-  height: 2px;
-  background: var(--border);
+  width: 24px;
+  height: 1px;
+  background: var(--border-light);
   transition: background 0.2s;
 }
 
 .stepLine.active {
   background: var(--accent);
+  opacity: 0.5;
 }
 
 .content {
   width: 100%;
-  max-width: 560px;
+  max-width: 520px;
 }

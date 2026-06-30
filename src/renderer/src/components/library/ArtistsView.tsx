@@ -46,7 +46,9 @@ export default function ArtistsView(): React.ReactElement {
       <div className={styles.grid}>
         {artists.map((artist) => (
           <div key={artist.artist} className={styles.card} onClick={() => openArtist(artist)}>
-            <div className={styles.cardArt} style={{ borderRadius: '50%', overflow: 'hidden' }}>🎤</div>
+            <div className={styles.cardArt}>
+              <svg className={styles.cardArtEmpty} width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            </div>
             <div className={styles.cardInfo}>
               <div className={styles.cardTitle}>{artist.artist}</div>
               <div className={styles.cardSub}>{artist.albumCount} album · {artist.trackCount} bài</div>

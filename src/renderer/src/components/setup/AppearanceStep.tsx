@@ -9,6 +9,12 @@ interface Props {
   onBack: () => void
 }
 
+const THEMES = [
+  { value: 'dark'   as const, label: 'Tối'           },
+  { value: 'light'  as const, label: 'Sáng'          },
+  { value: 'system' as const, label: 'Theo hệ thống' },
+]
+
 export default function AppearanceStep({ data, onChange, onNext, onBack }: Props): React.ReactElement {
   return (
     <div className={styles.stepCard}>
@@ -18,18 +24,13 @@ export default function AppearanceStep({ data, onChange, onNext, onBack }: Props
       <div className={styles.field}>
         <label className={styles.fieldLabel}>Theme</label>
         <div className={styles.themePicker}>
-          {([
-            { value: 'dark', icon: '🌙', label: 'Tối' },
-            { value: 'light', icon: '☀️', label: 'Sáng' },
-            { value: 'system', icon: '💻', label: 'Theo hệ thống' }
-          ] as const).map((t) => (
+          {THEMES.map((t) => (
             <div
               key={t.value}
               className={`${styles.themeCard} ${data.theme === t.value ? styles.selected : ''}`}
               onClick={() => onChange({ theme: t.value })}
             >
-              <div className={styles.themeIcon}>{t.icon}</div>
-              {t.label}
+              <div className={styles.themeLabel}>{t.label}</div>
             </div>
           ))}
         </div>

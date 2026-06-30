@@ -62,7 +62,7 @@ export default function FoldersView(): React.ReactElement {
               onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-hover)')}
               onMouseLeave={(e) => (e.currentTarget.style.background = '')}
             >
-              <span style={{ fontSize: 24 }}>📁</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink: 0, opacity: 0.4 }}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
               <div>
                 <div style={{ fontWeight: 500 }}>{s.displayName}</div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{s.path}</div>

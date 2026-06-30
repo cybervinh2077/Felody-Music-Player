@@ -1,4 +1,8 @@
 import React from 'react'
+import {
+  Play, Pause, SkipBack, SkipForward, Shuffle, Repeat, Repeat1,
+  Heart, Volume1, Volume2, VolumeX, FolderOpen
+} from 'lucide-react'
 import { usePlayerStore } from '../../store/playerStore'
 import styles from './NowPlayingView.module.css'
 
@@ -40,12 +44,17 @@ export default function NowPlayingView(): React.ReactElement {
     toggleFavorite()
   }
 
+  const VolumeIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2
+
   if (!currentTrack) {
     return (
       <div className={styles.empty}>
-        <div className={styles.emptyIcon}>🎵</div>
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8" style={{ opacity: 0.15 }}>
+          <path d="M9 18V5l12-2v13"/>
+          <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+        </svg>
         <p>Chưa có bài hát nào đang phát</p>
-        <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>
+        <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
           Chọn bài hát từ thư viện để bắt đầu
         </p>
       </div>
@@ -57,7 +66,14 @@ export default function NowPlayingView(): React.ReactElement {
       <div className={styles.artwork}>
         {currentTrack.artworkPath
           ? <img src={`file:///${currentTrack.artworkPath.replace(/\\/g, '/')}`} alt={currentTrack.title || ''} />
-          : <div className={styles.artworkPlaceholder}>🎵</div>
+          : (
+            <div className={styles.artworkPlaceholder}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="0.8">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
+          )
         }
       </div>
 
@@ -84,26 +100,29 @@ export default function NowPlayingView(): React.ReactElement {
         <button
           className={`${styles.iconBtn} ${shuffle ? styles.active : ''}`}
           onClick={toggleShuffle} title="Shuffle"
-        >⇄</button>
-        <button className={styles.iconBtn} onClick={handlePrev}>⏮</button>
+        ><Shuffle size={16} /></button>
+        <button className={styles.iconBtn} onClick={handlePrev}><SkipBack size={20} /></button>
         <button className={styles.playBtn} onClick={() => setIsPlaying(!isPlaying)}>
-          {isPlaying ? '⏸' : '▶'}
+          {isPlaying
+            ? <Pause size={22} fill="currentColor" />
+            : <Play size={22} fill="currentColor" style={{ marginLeft: 2 }} />
+          }
         </button>
-        <button className={styles.iconBtn} onClick={handleNext}>⏭</button>
+        <button className={styles.iconBtn} onClick={handleNext}><SkipForward size={20} /></button>
         <button
           className={`${styles.iconBtn} ${repeat !== 'none' ? styles.active : ''}`}
           onClick={cycleRepeat}
-        >{repeat === 'one' ? '↺¹' : '↻'}</button>
+        >{repeat === 'one' ? <Repeat1 size={16} /> : <Repeat size={16} />}</button>
       </div>
 
       <div className={styles.extra}>
         <button
           className={`${styles.iconBtn} ${isFavorite ? styles.fav : ''}`}
           onClick={handleFavorite}
-        >{isFavorite ? '❤️' : '🤍'}</button>
+        ><Heart size={15} fill={isFavorite ? 'currentColor' : 'none'} /></button>
 
         <div className={styles.volume}>
-          <span>{volume === 0 ? '🔇' : '🔊'}</span>
+          <VolumeIcon size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
           <input
             type="range" min={0} max={1} step={0.01}
             value={volume}
@@ -116,7 +135,7 @@ export default function NowPlayingView(): React.ReactElement {
           className={styles.iconBtn}
           onClick={() => window.api.openFolder(currentTrack.path)}
           title="Mở thư mục chứa file"
-        >📂</button>
+        ><FolderOpen size={15} /></button>
       </div>
 
       {currentTrack.album && (

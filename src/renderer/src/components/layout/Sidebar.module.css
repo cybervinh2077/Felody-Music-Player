@@ -10,78 +10,77 @@
 }
 
 .logo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 16px 16px 8px;
+  padding: 18px 16px 16px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
 }
 
 .logoText {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text-primary);
+  letter-spacing: -0.01em;
 }
 
 .stats {
-  padding: 0 16px 12px;
+  padding: 4px 0 0;
   font-size: 11px;
   color: var(--text-muted);
-  display: flex;
-  gap: 6px;
+  letter-spacing: 0.01em;
 }
 
 .nav {
   flex: 1;
-  padding: 4px 8px;
+  padding: 4px 10px 16px;
 }
 
 .group {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .groupLabel {
   font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 0.07em;
   color: var(--text-muted);
-  padding: 0 8px;
-  margin-bottom: 4px;
+  padding: 0 6px;
+  margin-bottom: 2px;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  border-radius: var(--radius-md);
+  padding: 7px 6px;
+  border-radius: var(--radius-sm);
   width: 100%;
   text-align: left;
   font-size: 13px;
+  font-weight: 400;
   color: var(--text-secondary);
-  transition: background 0.1s, color 0.1s;
+  transition: color 0.1s, background 0.1s;
+  position: relative;
 }
 
 .navItem:hover {
-  background: var(--bg-hover);
   color: var(--text-primary);
+  background: var(--bg-hover);
 }
 
 .navItem.active {
-  background: var(--bg-active);
   color: var(--text-primary);
   font-weight: 500;
+  background: var(--bg-active);
 }
 
-.navIcon {
-  font-size: 15px;
-  flex-shrink: 0;
-  width: 20px;
-  text-align: center;
-}
-
-.navLabel {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.navItem.active::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 16px;
+  background: var(--accent);
+  border-radius: 0 1px 1px 0;
 }

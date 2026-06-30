@@ -80,7 +80,7 @@ export default function PlaylistsView(): React.ReactElement {
             onKeyDown={(e) => e.key === 'Enter' && handleCreate()}
             style={{
               flex: 1, padding: '8px 12px', background: 'var(--bg-elevated)',
-              border: '1px solid var(--border-focus)', borderRadius: 8,
+              border: '1px solid var(--border-light)', borderRadius: 4,
               color: 'var(--text-primary)'
             }}
           />
@@ -107,8 +107,10 @@ export default function PlaylistsView(): React.ReactElement {
             >
               <div style={{
                 width: 44, height: 44, background: 'var(--bg-elevated)',
-                borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20
-              }}>📋</div>
+                borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ opacity: 0.35 }}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+              </div>
               <div style={{ flex: 1 }}>
                 <div style={{ fontWeight: 500 }}>{pl.name}</div>
                 <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{pl.trackCount || 0} bài</div>
@@ -116,7 +118,7 @@ export default function PlaylistsView(): React.ReactElement {
               <button
                 onClick={(e) => handleDelete(pl.id, e)}
                 style={{ color: 'var(--text-muted)', fontSize: 16, padding: '4px 8px' }}
-              >🗑</button>
+              ><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg></button>
             </div>
           ))
         )}

@@ -36,9 +36,11 @@ export default function SourceStep({ data, onChange, onNext, onBack }: Props): R
         )}
         {data.folders.map((f) => (
           <div key={f} className={styles.folderItem}>
-            <span style={{ fontSize: 16 }}>📁</span>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" style={{ flexShrink: 0, opacity: 0.4 }}><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
             <span className={styles.folderPath}>{f}</span>
-            <button className={styles.folderRemove} onClick={() => removeFolder(f)}>✕</button>
+            <button className={styles.folderRemove} onClick={() => removeFolder(f)}>
+              <svg width="10" height="10" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
           </div>
         ))}
       </div>
