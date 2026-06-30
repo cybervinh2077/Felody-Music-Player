@@ -37,14 +37,22 @@ export async function scanSources(win: BrowserWindow | null): Promise<void> {
   scanning = true
   stopRequested = false
 
-  const sources = getSources().filter((s) => s.isEnabled)
+  const allSources = getSources()
+  const sources = allSources.filter((s) => s.isEnabled)
+  console.log(`[scanner] sources total=${allSources.length} enabled=${sources.length}`, sources.map(s => s.path))
+
   const progress: ScanProgress = { total: 0, scanned: 0, valid: 0, errors: 0, currentFile: '', isComplete: false }
 
   try {
     // Count files first
     for (const source of sources) {
-      if (!fs.existsSync(source.path)) continue
-      progress.total += countFiles(source.path)
+      if (!fs.existsSync(source.path)) {
+        console.log(`[scanner] source path does not exist: ${source.path}`)
+        continue
+      }
+      const n = countFiles(source.path)
+      console.log(`[scanner] countFiles("${source.path}") = ${n}`)
+      progress.total += n
     }
 
     emit(win, progress)
@@ -77,6 +85,7 @@ export async function scanSources(win: BrowserWindow | null): Promise<void> {
 
     for (const source of sources) {
       if (stopRequested || !fs.existsSync(source.path)) continue
+      console.log(`[scanner] scanning dir: ${source.path}`)
       await scanDir(source.path, upsert, win, progress)
       updateSourceScanTime(source.id)
     }
@@ -96,7 +105,8 @@ async function scanDir(
   let entries: fs.Dirent[]
   try {
     entries = fs.readdirSync(dir, { withFileTypes: true })
-  } catch {
+  } catch (err) {
+    console.log(`[scanner] readdirSync failed: ${dir}`, err)
     return
   }
 
@@ -142,7 +152,8 @@ async function scanDir(
           scanStatus: 'ok'
         })
         progress.valid++
-      } catch {
+      } catch (err) {
+        console.log(`[scanner] parse error: ${fullPath}`, err)
         progress.errors++
         try {
           upsert.run({

@@ -19,3 +19,32 @@
   flex-direction: column;
   background: var(--bg-base);
 }
+
+.scanBar {
+  height: 28px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.scanFill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: var(--accent);
+  opacity: 0.15;
+  transition: width 0.3s;
+}
+
+.scanText {
+  position: relative;
+  font-size: 11px;
+  color: var(--text-muted);
+  padding: 0 14px;
+  white-space: nowrap;
+}
