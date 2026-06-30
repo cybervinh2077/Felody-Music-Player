@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FolderSource, ScanProgress } from '../../../../shared/types'
 import { useSettingsStore } from '../../store/settingsStore'
+import { useLibraryStore } from '../../store/libraryStore'
 import styles from './SettingsView.module.css'
 
 interface Props {
@@ -9,6 +10,7 @@ interface Props {
 
 export default function SettingsView({ onReScan }: Props): React.ReactElement {
   const { settings, update } = useSettingsStore()
+  const { loadAll } = useLibraryStore()
   const [sources, setSources] = useState<FolderSource[]>([])
   const [progress, setProgress] = useState<ScanProgress | null>(null)
   const [scanning, setScanning] = useState(false)
@@ -40,6 +42,7 @@ export default function SettingsView({ onReScan }: Props): React.ReactElement {
   const removeFolder = async (id: number) => {
     await window.api.removeSource(id)
     setSources((prev) => prev.filter((s) => s.id !== id))
+    await loadAll()
   }
 
   const startScan = async () => {

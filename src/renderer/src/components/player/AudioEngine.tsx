@@ -1,15 +1,17 @@
-import { useEffect, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { usePlayerStore } from '../../store/playerStore'
 
-export default function AudioEngine(): null {
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-  const { currentTrack, isPlaying, volume, setIsPlaying, setProgress, setDuration, nextTrack, setCurrentTrack, repeat } = usePlayerStore()
+export default function AudioEngine(): React.ReactElement {
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const {
+    currentTrack, isPlaying, volume, repeat,
+    setIsPlaying, setProgress, setDuration, nextTrack, setCurrentTrack
+  } = usePlayerStore()
 
+  // Event listeners — re-run when repeat mode changes
   useEffect(() => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio()
-    }
     const audio = audioRef.current
+    if (!audio) return
 
     const onTimeUpdate = () => {
       if (audio.duration) setProgress(audio.currentTime / audio.duration)
@@ -22,27 +24,24 @@ export default function AudioEngine(): null {
         return
       }
       const next = nextTrack()
-      if (next) {
-        setCurrentTrack(next)
-      } else {
-        setIsPlaying(false)
-      }
+      if (next) setCurrentTrack(next)
+      else setIsPlaying(false)
     }
-    const onPlay = () => setIsPlaying(true)
+    const onPlay  = () => setIsPlaying(true)
     const onPause = () => setIsPlaying(false)
 
-    audio.addEventListener('timeupdate', onTimeUpdate)
+    audio.addEventListener('timeupdate',    onTimeUpdate)
     audio.addEventListener('durationchange', onDurationChange)
-    audio.addEventListener('ended', onEnded)
-    audio.addEventListener('play', onPlay)
-    audio.addEventListener('pause', onPause)
+    audio.addEventListener('ended',         onEnded)
+    audio.addEventListener('play',          onPlay)
+    audio.addEventListener('pause',         onPause)
 
     return () => {
-      audio.removeEventListener('timeupdate', onTimeUpdate)
+      audio.removeEventListener('timeupdate',    onTimeUpdate)
       audio.removeEventListener('durationchange', onDurationChange)
-      audio.removeEventListener('ended', onEnded)
-      audio.removeEventListener('play', onPlay)
-      audio.removeEventListener('pause', onPause)
+      audio.removeEventListener('ended',         onEnded)
+      audio.removeEventListener('play',          onPlay)
+      audio.removeEventListener('pause',         onPause)
     }
   }, [repeat])
 
@@ -55,21 +54,16 @@ export default function AudioEngine(): null {
       audio.src = src
       audio.load()
     }
-    if (isPlaying) {
-      audio.play().catch(() => {})
-    }
+    if (isPlaying) audio.play().catch(() => {})
     window.api.incrementPlay(currentTrack.id)
   }, [currentTrack])
 
-  // Play/pause
+  // Play / pause
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
-    if (isPlaying) {
-      audio.play().catch(() => {})
-    } else {
-      audio.pause()
-    }
+    if (isPlaying) audio.play().catch(() => {})
+    else audio.pause()
   }, [isPlaying])
 
   // Volume
@@ -77,13 +71,6 @@ export default function AudioEngine(): null {
     if (audioRef.current) audioRef.current.volume = volume
   }, [volume])
 
-  return null
-}
-
-// Expose seek function via store subscription
-export function seekTo(ratio: number): void {
-  const audio = document.querySelector('audio') as HTMLAudioElement | null
-  if (audio && audio.duration) {
-    audio.currentTime = ratio * audio.duration
-  }
+  // Render a real <audio> in the DOM so document.querySelector('audio') works for seeking
+  return <audio ref={audioRef} style={{ display: 'none' }} />
 }

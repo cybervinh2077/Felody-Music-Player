@@ -21,7 +21,13 @@ export function addSource(folderPath: string): FolderSource {
 }
 
 export function removeSource(id: number): void {
-  getDb().prepare('DELETE FROM folder_sources WHERE id = ?').run(id)
+  const db = getDb()
+  const source = db.prepare('SELECT path FROM folder_sources WHERE id = ?').get(id) as { path: string } | undefined
+  if (source) {
+    // Delete all tracks whose path starts with this folder
+    db.prepare('DELETE FROM tracks WHERE SUBSTR(path, 1, ?) = ?').run(source.path.length, source.path)
+  }
+  db.prepare('DELETE FROM folder_sources WHERE id = ?').run(id)
 }
 
 export function toggleSource(id: number, enabled: boolean): void {
