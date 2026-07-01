@@ -19,6 +19,7 @@ function createWindow(): void {
     frame: false,
     titleBarStyle: 'hidden',
     backgroundColor: '#0f0f0f',
+    icon: path.join(app.getAppPath(), 'logo', 'felody_app_icon.png'),
     webPreferences: {
       preload: path.join(__dirname, '../preload/index.js'),
       sandbox: false,
