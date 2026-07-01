@@ -61,13 +61,25 @@ export default function PlayerBar({ onOpenNowPlaying }: Props): React.ReactEleme
 
   const VolumeIcon = volume === 0 ? VolumeX : volume < 0.5 ? Volume1 : Volume2
 
+  const artworkSrc = currentTrack?.artworkPath
+    ? 'file:///' + currentTrack.artworkPath.replace(/\\/g, '/').replace(/ /g, '%20')
+    : null
+
   return (
     <div className={styles.playerBar}>
+      {/* Ambient background */}
+      {artworkSrc && (
+        <div className={styles.bg}>
+          <img key={artworkSrc} className={styles.bgImg} src={artworkSrc} alt="" />
+          <div className={styles.bgOverlay} />
+        </div>
+      )}
+
       {/* Track info */}
       <div className={styles.trackInfo} onClick={onOpenNowPlaying}>
         <div className={styles.artwork}>
-          {currentTrack?.artworkPath
-            ? <img src={'file:///' + currentTrack.artworkPath!.replace(/\\/g, '/').replace(/ /g, '%20')} alt="" />
+          {artworkSrc
+            ? <img src={artworkSrc} alt="" />
             : (
               <div className={styles.artworkPlaceholder}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">

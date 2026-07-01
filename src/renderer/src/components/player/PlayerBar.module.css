@@ -7,6 +7,50 @@
   padding: 0 20px;
   gap: 20px;
   flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ambient background */
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+@keyframes playerBgFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 0.5; }
+}
+
+.bgImg {
+  position: absolute;
+  inset: -30px;
+  width: calc(100% + 60px);
+  height: calc(100% + 60px);
+  object-fit: cover;
+  object-position: center;
+  filter: blur(55px) saturate(2) brightness(0.9);
+  animation: playerBgFadeIn 1s ease forwards;
+}
+
+.bgOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(8, 8, 8, 0.82) 0%,
+    rgba(8, 8, 8, 0.6)  30%,
+    rgba(8, 8, 8, 0.6)  70%,
+    rgba(8, 8, 8, 0.82) 100%
+  );
+}
+
+/* All direct children need z-index to sit above bg */
+.trackInfo, .center, .right {
+  position: relative;
+  z-index: 1;
 }
 
 /* Track info */
