@@ -87,9 +87,13 @@ export default function AppLayout(): React.ReactElement {
     }
 
     if (paths.length === 0) return
-    const added = await window.api.addPaths(paths)
-    if (added.length > 0) startScan()
-  }, [startScan])
+    const { sourcesAdded, filesImported } = await window.api.addPaths(paths)
+
+    // Folders added → trigger full scan of those new sources
+    if (sourcesAdded.length > 0) startScan()
+    // Individual files imported → just reload library, no scan needed
+    else if (filesImported > 0) loadAll()
+  }, [startScan, loadAll])
 
   const renderView = () => {
     switch (view) {

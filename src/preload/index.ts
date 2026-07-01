@@ -52,7 +52,8 @@ const api = {
   saveSession: (session: Partial<PlaybackSession>): Promise<void> => ipcRenderer.invoke(IPC.SESSION_SAVE, session),
 
   // Drag & drop
-  addPaths: (paths: string[]): Promise<FolderSource[]> => ipcRenderer.invoke(IPC.SOURCES_ADD_PATHS, paths),
+  addPaths: (paths: string[]): Promise<{ sourcesAdded: FolderSource[]; filesImported: number }> =>
+    ipcRenderer.invoke(IPC.SOURCES_ADD_PATHS, paths),
 
   // File ops
   getArtwork: (artworkPath: string): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_GET_ARTWORK, artworkPath),

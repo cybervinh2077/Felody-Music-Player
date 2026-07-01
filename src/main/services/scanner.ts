@@ -196,6 +196,63 @@ async function extractArtwork(
   }
 }
 
+// Import specific files directly into the DB without adding a folder source
+export async function importFiles(filePaths: string[]): Promise<number> {
+  const db = getDb()
+  const upsert = db.prepare(`
+    INSERT INTO tracks (path, file_name, format, duration_ms, bitrate, sample_rate, channels,
+      title, artist, album, album_artist, genre, year, track_number, disc_number,
+      artwork_path, scan_status)
+    VALUES (@path, @fileName, @format, @durationMs, @bitrate, @sampleRate, @channels,
+      @title, @artist, @album, @albumArtist, @genre, @year, @trackNumber, @discNumber,
+      @artworkPath, @scanStatus)
+    ON CONFLICT(path) DO UPDATE SET
+      file_name = excluded.file_name, format = excluded.format,
+      duration_ms = excluded.duration_ms, bitrate = excluded.bitrate,
+      sample_rate = excluded.sample_rate, channels = excluded.channels,
+      title = excluded.title, artist = excluded.artist,
+      album = excluded.album, album_artist = excluded.album_artist,
+      genre = excluded.genre, year = excluded.year,
+      track_number = excluded.track_number, disc_number = excluded.disc_number,
+      scan_status = excluded.scan_status
+  `)
+
+  const parse = await getParser()
+  let imported = 0
+
+  for (const fullPath of filePaths) {
+    if (!SUPPORTED_FORMATS.has(path.extname(fullPath).toLowerCase())) continue
+    try {
+      const meta = await parse(fullPath, { duration: true, skipCovers: false })
+      const common = meta.common
+      const native = meta.format
+      const artworkPath = await extractArtwork(fullPath, common.picture?.[0])
+      upsert.run({
+        path: fullPath,
+        fileName: path.basename(fullPath),
+        format: path.extname(fullPath).slice(1).toUpperCase(),
+        durationMs: Math.round((native.duration ?? 0) * 1000),
+        bitrate: native.bitrate ? Math.round(native.bitrate) : null,
+        sampleRate: native.sampleRate ?? null,
+        channels: native.numberOfChannels ?? null,
+        title: common.title ?? null,
+        artist: common.artist ?? null,
+        album: common.album ?? null,
+        albumArtist: common.albumartist ?? null,
+        genre: common.genre?.[0] ?? null,
+        year: common.year ?? null,
+        trackNumber: common.track?.no ?? null,
+        discNumber: common.disk?.no ?? null,
+        artworkPath,
+        scanStatus: 'ok'
+      })
+      imported++
+    } catch { /* skip unparseable files */ }
+  }
+
+  return imported
+}
+
 function countFiles(dir: string): number {
   let count = 0
   try {

@@ -12,7 +12,7 @@ import {
   getPlaylistTracks, addTrackToPlaylist, removeTrackFromPlaylist,
   getSession, saveSession
 } from '../services/library'
-import { scanSources, stopScan } from '../services/scanner'
+import { scanSources, stopScan, importFiles } from '../services/scanner'
 import { AppSettings } from '../../shared/types'
 
 export function registerHandlers(getMainWindow: () => BrowserWindow | null): void {
@@ -82,10 +82,11 @@ export function registerHandlers(getMainWindow: () => BrowserWindow | null): voi
   ipcMain.handle(IPC.SESSION_GET, () => getSession())
   ipcMain.handle(IPC.SESSION_SAVE, (_, session) => saveSession(session))
 
-  // Drag & drop: resolve each path to its folder, add unique folders as sources
-  ipcMain.handle(IPC.SOURCES_ADD_PATHS, (_, paths: string[]) => {
+  // Drag & drop: folders → add as source (caller will rescan); files → import directly
+  ipcMain.handle(IPC.SOURCES_ADD_PATHS, async (_, paths: string[]) => {
     const AUDIO_EXTS = new Set(['.mp3','.wav','.flac','.aac','.m4a','.ogg','.opus','.ape','.wv','.wma','.aiff','.aif','.alac'])
     const folderPaths = new Set<string>()
+    const filePaths: string[] = []
 
     for (const p of paths) {
       try {
@@ -93,12 +94,15 @@ export function registerHandlers(getMainWindow: () => BrowserWindow | null): voi
         if (stat.isDirectory()) {
           folderPaths.add(p)
         } else if (AUDIO_EXTS.has(path.extname(p).toLowerCase())) {
-          folderPaths.add(path.dirname(p))
+          filePaths.push(p)
         }
       } catch { /* skip inaccessible paths */ }
     }
 
-    return Array.from(folderPaths).map((fp) => addSource(fp))
+    const sourcesAdded = Array.from(folderPaths).map((fp) => addSource(fp))
+    const filesImported = filePaths.length > 0 ? await importFiles(filePaths) : 0
+
+    return { sourcesAdded, filesImported }
   })
 
   // File ops
