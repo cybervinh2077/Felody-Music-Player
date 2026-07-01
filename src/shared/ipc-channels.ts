@@ -41,4 +41,7 @@ export const IPC = {
   // File ops
   FILE_GET_ARTWORK: 'file:get-artwork',
   FILE_OPEN_FOLDER: 'file:open-folder',
+
+  // Drag & drop
+  SOURCES_ADD_PATHS: 'sources:add-paths',
 } as const

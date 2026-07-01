@@ -1,5 +1,6 @@
 import { ipcMain, dialog, shell, BrowserWindow, nativeImage } from 'electron'
 import fs from 'fs'
+import path from 'path'
 import { IPC } from '../../shared/ipc-channels'
 import { getSettings, setSettings } from '../services/settings'
 import {
@@ -80,6 +81,25 @@ export function registerHandlers(getMainWindow: () => BrowserWindow | null): voi
   // Session
   ipcMain.handle(IPC.SESSION_GET, () => getSession())
   ipcMain.handle(IPC.SESSION_SAVE, (_, session) => saveSession(session))
+
+  // Drag & drop: resolve each path to its folder, add unique folders as sources
+  ipcMain.handle(IPC.SOURCES_ADD_PATHS, (_, paths: string[]) => {
+    const AUDIO_EXTS = new Set(['.mp3','.wav','.flac','.aac','.m4a','.ogg','.opus','.ape','.wv','.wma','.aiff','.aif','.alac'])
+    const folderPaths = new Set<string>()
+
+    for (const p of paths) {
+      try {
+        const stat = fs.statSync(p)
+        if (stat.isDirectory()) {
+          folderPaths.add(p)
+        } else if (AUDIO_EXTS.has(path.extname(p).toLowerCase())) {
+          folderPaths.add(path.dirname(p))
+        }
+      } catch { /* skip inaccessible paths */ }
+    }
+
+    return Array.from(folderPaths).map((fp) => addSource(fp))
+  })
 
   // File ops
   ipcMain.handle(IPC.FILE_GET_ARTWORK, (_, artworkPath: string) => {

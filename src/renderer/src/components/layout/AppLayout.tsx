@@ -25,6 +25,8 @@ export default function AppLayout(): React.ReactElement {
   const { loadAll } = useLibraryStore()
   const [scanning, setScanning] = useState(false)
   const [scanProgress, setScanProgress] = useState<ScanProgress | null>(null)
+  const [dragDepth, setDragDepth] = useState(0)
+  const isDragging = dragDepth > 0
 
   const startScan = useCallback(async () => {
     if (scanning) return
@@ -59,6 +61,36 @@ export default function AppLayout(): React.ReactElement {
 
   const openNowPlaying = useCallback(() => setView('now-playing'), [])
 
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragDepth((d) => d + 1)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setDragDepth((d) => d - 1)
+  }, [])
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'copy'
+  }, [])
+
+  const handleDrop = useCallback(async (e: React.DragEvent) => {
+    e.preventDefault()
+    setDragDepth(0)
+
+    const paths: string[] = []
+    for (let i = 0; i < e.dataTransfer.files.length; i++) {
+      const file = e.dataTransfer.files[i] as File & { path: string }
+      if (file.path) paths.push(file.path)
+    }
+
+    if (paths.length === 0) return
+    const added = await window.api.addPaths(paths)
+    if (added.length > 0) startScan()
+  }, [startScan])
+
   const renderView = () => {
     switch (view) {
       case 'songs':           return <SongsView />
@@ -84,7 +116,26 @@ export default function AppLayout(): React.ReactElement {
   }
 
   return (
-    <div className={styles.layout}>
+    <div
+      className={styles.layout}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
+      {isDragging && (
+        <div className={styles.dropOverlay}>
+          <div className={styles.dropBox}>
+            <svg className={styles.dropIcon} width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="17 8 12 3 7 8"/>
+              <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <div className={styles.dropTitle}>Thả vào đây để thêm nhạc</div>
+            <div className={styles.dropSub}>Hỗ trợ thư mục hoặc file MP3, FLAC, WAV và các định dạng khác</div>
+          </div>
+        </div>
+      )}
       <TitleBar />
       {scanning && scanProgress && (
         <div className={styles.scanBar}>
