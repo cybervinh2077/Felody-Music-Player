@@ -1,12 +1,49 @@
 .page {
   flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Blurred ambient background */
+.bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.bgImg {
+  position: absolute;
+  inset: -80px;
+  width: calc(100% + 160px);
+  height: calc(100% + 160px);
+  object-fit: cover;
+  filter: blur(90px) saturate(1.4);
+  opacity: 0.28;
+  transform: scale(1.05);
+  transition: opacity 1s ease;
+}
+
+.bgOverlay {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center top, rgba(10,10,10,0.3) 0%, rgba(10,10,10,0.82) 70%),
+    linear-gradient(to bottom, rgba(10,10,10,0.5) 0%, rgba(10,10,10,0.9) 100%);
+}
+
+/* Scrollable content layer above bg */
+.content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 32px 60px 24px;
   gap: 22px;
-  overflow: auto;
+  height: 100%;
+  overflow-y: auto;
 }
 
 .empty {
