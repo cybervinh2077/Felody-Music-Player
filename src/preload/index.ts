@@ -55,6 +55,11 @@ const api = {
   addPaths: (paths: string[]): Promise<{ sourcesAdded: FolderSource[]; filesImported: number }> =>
     ipcRenderer.invoke(IPC.SOURCES_ADD_PATHS, paths),
 
+  // Tag editor
+  updateTrack: (id: number, fields: Partial<Pick<Track,
+    'title'|'artist'|'album'|'albumArtist'|'genre'|'year'|'trackNumber'|'discNumber'
+  >>): Promise<Track | null> => ipcRenderer.invoke(IPC.LIBRARY_UPDATE_TRACK, id, fields),
+
   // File ops
   getArtwork: (artworkPath: string): Promise<string | null> => ipcRenderer.invoke(IPC.FILE_GET_ARTWORK, artworkPath),
   openFolder: (filePath: string): Promise<void> => ipcRenderer.invoke(IPC.FILE_OPEN_FOLDER, filePath),

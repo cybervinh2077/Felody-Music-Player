@@ -7,7 +7,7 @@ import {
   getSources, addSource, removeSource, toggleSource,
   getTracks, getAlbums, getAlbumTracks, getArtists, getArtistTracks,
   searchTracks, getFavorites, getRecentlyAdded, getMostPlayed, getRecentlyPlayed,
-  toggleFavorite, incrementPlayCount, getStats,
+  toggleFavorite, incrementPlayCount, getStats, updateTrack,
   getPlaylists, createPlaylist, deletePlaylist, renamePlaylist,
   getPlaylistTracks, addTrackToPlaylist, removeTrackFromPlaylist,
   getSession, saveSession
@@ -64,6 +64,7 @@ export function registerHandlers(getMainWindow: () => BrowserWindow | null): voi
   ipcMain.handle(IPC.LIBRARY_GET_STATS, () => getStats())
   ipcMain.handle(IPC.LIBRARY_TOGGLE_FAVORITE, (_, id: number) => toggleFavorite(id))
   ipcMain.handle(IPC.LIBRARY_INCREMENT_PLAY, (_, id: number) => incrementPlayCount(id))
+  ipcMain.handle(IPC.LIBRARY_UPDATE_TRACK, (_, id: number, fields: object) => updateTrack(id, fields as Parameters<typeof updateTrack>[1]))
 
   // Playlists
   ipcMain.handle(IPC.PLAYLIST_LIST, () => getPlaylists())

@@ -44,4 +44,7 @@ export const IPC = {
 
   // Drag & drop
   SOURCES_ADD_PATHS: 'sources:add-paths',
+
+  // Tag editor
+  LIBRARY_UPDATE_TRACK: 'library:update-track',
 } as const

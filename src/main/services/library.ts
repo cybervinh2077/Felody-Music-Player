@@ -150,6 +150,19 @@ export function getRecentlyPlayed(limit = 50): Track[] {
   )
 }
 
+export function updateTrack(
+  id: number,
+  fields: Partial<Pick<Track, 'title'|'artist'|'album'|'albumArtist'|'genre'|'year'|'trackNumber'|'discNumber'>>
+): Track | null {
+  const db = getDb()
+  const allowed = ['title','artist','album','albumArtist','genre','year','trackNumber','discNumber']
+  const entries = Object.entries(fields).filter(([k]) => allowed.includes(k))
+  if (entries.length === 0) return getTrackById(id)
+  const setClauses = entries.map(([k]) => `${camelToSnake(k)} = ?`).join(', ')
+  db.prepare(`UPDATE tracks SET ${setClauses} WHERE id = ?`).run(...entries.map(([,v]) => v), id)
+  return getTrackById(id)
+}
+
 export function toggleFavorite(id: number): boolean {
   const db = getDb()
   const track = db.prepare('SELECT is_favorite FROM tracks WHERE id = ?').get(id) as { is_favorite: number } | undefined
